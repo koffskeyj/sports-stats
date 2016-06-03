@@ -29,8 +29,7 @@ cursor.execute(table_create_command)
 #yellow_cards = 3
 #red_cards = 0
 
-#cursor.execute("INSERT INTO arsenal_2016_17_stats VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);", \
-               #(full_name, position, age, number, games_started, goals_scored, assists, yellow_cards, red_cards))
+#cursor.execute("INSERT INTO arsenal_2016_17_stats VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"(full_name, position, age, number, games_started, goals_scored, assists, yellow_cards, red_cards))
 
 
 cursor.execute("INSERT INTO arsenal_2016_17_stats VALUES('Hector Bellerin', 'RB', 21, 24, 36, 1, 5, 3, 0),"
@@ -51,10 +50,90 @@ cursor.execute("INSERT INTO arsenal_2016_17_stats VALUES('Hector Bellerin', 'RB'
 
 connection.commit()
 
-cursor.execute("SELECT * FROM arsenal_2016_17_stats")
-results = cursor.fetchall()
-for row in results:
-    print(row)
+
+#cursor.execute("SELECT * FROM arsenal_2016_17_stats));"
+
+def search_player_name():
+    player_name = input("Please search by player name: ")
+    cursor.execute("SELECT * FROM arsenal_2016_17_stats WHERE full_name = %s;",(player_name,))
+    results = cursor.fetchall()
+    print(results)
+    for row in results:
+        if player_name in row:
+            print("Name:", row[0])
+            print("Position:", row[1])
+            print("Age:", row[2])
+            print("Number:", row[3])
+            print("Games started:", row[4])
+            print("Goals scored:", row[5])
+            print("Assists:", row[6])
+            print("Yellow cards:", row[7])
+            print("Red cards:", row[8])
+
+
+def add_player():
+    new_player = input("Would you like to add a new player? y/n: ")
+    if new_player == "y":
+        full_name = input("Please input player name: ")
+        position = input("Please input player position: ")
+        age = int(input("Please input player age: "))
+        number = int(input("Please input player number: "))
+        games_started = int(input("Please input games started: "))
+        goals_scored = int(input("Please input goals scored: "))
+        assists = int(input("Please input assists made: "))
+        yellow_cards = int(input("Please input amount of yellow cards: "))
+        red_cards = int(input("Please input amount of red cards: "))
+
+        cursor.execute("INSERT INTO arsenal_2016_17_stats VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",(full_name, position, age, number, games_started, goals_scored,assists, yellow_cards, red_cards))
+        connection.commit()
+        cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
+        results = cursor.fetchall()
+        for row in results:
+            print([row])
+    if new_player == "n":
+        search_player_name()
+
+
+def wild_card_search():
+    search_wild_card = input("Please enter search keyword: ")
+    keys = ["Full Name", "Position", "Age", "Number", "Games Started", "Goals Scored", "Assists", "Yellow Cards",
+            "Red Cards"]
+    cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
+    results = cursor.fetchall()
+    player_stats_dicts = [dict(zip(keys, row)) for row in results]
+    for i in player_stats_dicts:
+        if search_wild_card in i["Full Name"]:
+            print(i)
+        if search_wild_card in i["Position"]:
+            print(i)
+        if search_wild_card in str(i["Age"]):
+            print(i)
+        if search_wild_card in str(i["Number"]):
+            print(i)
+        if search_wild_card in str(i["Games Started"]):
+            print(i)
+        if search_wild_card in str(i["Goals Scored"]):
+            print(i)
+        if search_wild_card in str(i["Assists"]):
+            print(i)
+        if search_wild_card in str(i["Yellow Cards"]):
+            print(i)
+        if search_wild_card in str(i["Red Cards"]):
+            print(i)
+
+    #any(i['Full Name'] == search_wild_card for i in player_stats_dicts)
+
+
+
+
+
+
+
+#add_player()
+wild_card_search()
+
 
 cursor.close()
 connection.close()
+
+
