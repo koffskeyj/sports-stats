@@ -58,6 +58,8 @@ def search_player_name():
     cursor.execute("SELECT * FROM arsenal_2016_17_stats WHERE full_name = %s;",(player_name,))
     results = cursor.fetchall()
     print(results)
+    if results is None:
+        print("Invalid player.")
     for row in results:
         if player_name in row:
             print("Name:", row[0])
@@ -69,7 +71,6 @@ def search_player_name():
             print("Assists:", row[6])
             print("Yellow cards:", row[7])
             print("Red cards:", row[8])
-
 
 def add_player():
     new_player = input("Would you like to add a new player? y/n: ")
@@ -94,8 +95,8 @@ def add_player():
         search_player_name()
 
 
-def wild_card_search():
-    search_wild_card = input("Please enter search keyword: ")
+def wild_card_search(search_wild_card):
+    #search_wild_card = input("Please enter search keyword: ")
     keys = ["Full Name", "Position", "Age", "Number", "Games Started", "Goals Scored", "Assists", "Yellow Cards",
             "Red Cards"]
     cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
@@ -128,9 +129,9 @@ def wild_card_search():
 
 
 
-
+search_player_name()
 #add_player()
-wild_card_search()
+#wild_card_search("CM")
 
 
 cursor.close()
