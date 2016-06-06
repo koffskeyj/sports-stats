@@ -64,7 +64,13 @@ def stat_output(data, query, key):
             print("Goals scored:", row["Goals Scored"])
             print("Assists:", row["Assists"])
             print("Yellow cards:", row["Yellow Cards"])
-            print("Red cards:", row["Red Cards"])
+            print("Red cards:", row["Red Cards"], "\n")
+
+
+#def wild_card_output(data, user_input, key):
+    #for row in data:
+        #if user_input in row[key]:
+            #print(row)
 
 
 def nice_display(data, user_input):
@@ -78,7 +84,7 @@ def nice_display(data, user_input):
             print("Goals scored:", row[5])
             print("Assists:", row[6])
             print("Yellow cards:", row[7])
-            print("Red cards:", row[8])
+            print("Red cards:", row[8], "\n")
 
 
 def search_player_name():
@@ -108,23 +114,12 @@ def add_player():
     connection.commit()
     cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
     results = cursor.fetchall()
-    for row in results:
-        if full_name in row:
-            print("Name:", row[0])
-            print("Position:", row[1])
-            print("Age:", row[2])
-            print("Number:", row[3])
-            print("Games started:", row[4])
-            print("Goals scored:", row[5])
-            print("Assists:", row[6])
-            print("Yellow cards:", row[7])
-            print("Red cards:", row[8])
+    nice_display(results, full_name)
     search = input("Would you like to add another player? y/n: ")
     if search == "y":
         wild_card_search()
     else:
         control()
-
 
 
 def stat_search():
@@ -133,7 +128,7 @@ def stat_search():
     cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
     results = cursor.fetchall()
     player_stats_dicts = [dict(zip(keys, row)) for row in results]
-    print("Which stat would you like to search for? 1. Number, 2. Position, 3. Age, 4. Goals Scored 5. Assists")
+    print("Which stat/attribute would you like to search for? 1. Number, 2. Position, 3. Age, 4. Goals Scored 5. Assists")
     stat_lookup = input(">> ")
     if stat_lookup == "1":
         name_lookup = input("Number: ")
@@ -158,31 +153,21 @@ def stat_search():
 
 
 def wild_card_search():
-    search_wild_card = input("Please enter search keyword: ")
+    search_wild_card = input("Please enter keyword: ")
     keys = ["Full Name", "Position", "Age", "Number", "Games Started", "Goals Scored", "Assists", "Yellow Cards",
             "Red Cards"]
     cursor.execute("SELECT * FROM arsenal_2016_17_stats;")
     results = cursor.fetchall()
     player_stats_dicts = [dict(zip(keys, row)) for row in results]
-    for row in player_stats_dicts:
-        if search_wild_card in row["Full Name"]:
-            print(row)
-        if search_wild_card in row["Position"]:
-            print(row)
-        if search_wild_card in str(row["Age"]):
-            print(row)
-        if search_wild_card in str(row["Number"]):
-            print(row)
-        if search_wild_card in str(row["Games Started"]):
-            print(row)
-        if search_wild_card in str(row["Goals Scored"]):
-            print(row)
-        if search_wild_card in str(row["Assists"]):
-            print(row)
-        if search_wild_card in str(row["Yellow Cards"]):
-            print(row)
-        if search_wild_card in str(row["Red Cards"]):
-            print(row)
+    stat_output(player_stats_dicts, search_wild_card, "Full Name")
+    stat_output(player_stats_dicts, search_wild_card, "Position")
+    stat_output(player_stats_dicts, search_wild_card, "Age")
+    stat_output(player_stats_dicts, search_wild_card, "Number")
+    stat_output(player_stats_dicts, search_wild_card, "Games Started")
+    stat_output(player_stats_dicts, search_wild_card, "Goals Scored")
+    stat_output(player_stats_dicts, search_wild_card, "Assists")
+    stat_output(player_stats_dicts, search_wild_card, "Yellow Cards")
+    stat_output(player_stats_dicts, search_wild_card, "Red Cards")
     search = input("Would you like to search again? y/n: ")
     if search == "y":
         wild_card_search()
@@ -190,8 +175,23 @@ def wild_card_search():
         control()
 
 
+def top_players():
+    print("Find top players in... 1. goals scored, 2. assists: ")
+    user_input = input(">> ")
+    if user_input == "1":
+        cursor.execute("SELECT * FROM arsenal_2016_17_stats ORDER BY goals_scored DESC;")
+        results = cursor.fetchall()
+        for row in results:
+            print(row[0],":", row[5])
+    if user_input == "2":
+        cursor.execute("SELECT * FROM arsenal_2016_17_stats ORDER BY assists DESC;")
+        results = cursor.fetchall()
+        for row in results:
+            print(row[0],":", row[6])
+
+
 def control():
-    print("Would you like to... 1. search player name, 2. search stat, 3. search wild card 4. add new player")
+    print("Would you like to... 1. search player name, 2. search stat, 3. search wild card, 4. add new player, 5. search top performers")
     user_input = input(">> ")
     if user_input == "1":
         search_player_name()
@@ -201,12 +201,15 @@ def control():
         wild_card_search()
     if user_input == "4":
         add_player()
+    if user_input == "5":
+        top_players()
 
 control()
-# stat_search()
+#stat_search()
 #search_player_name()
 #add_player()
 #wild_card_search("CM")
+#top_players()
 
 
 cursor.close()
